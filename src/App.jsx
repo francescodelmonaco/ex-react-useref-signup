@@ -1,16 +1,18 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 
 const letters = "abcdefghijklmnopqrstuvwxyz";
 const numbers = "0123456789";
 const symbols = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/`~";
 
 export default function App() {
+  // ref
+  const nameRef = useRef();
+  const specRef = useRef();
+  const yearRef = useRef();
+
   // states
-  const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [spec, setSpec] = useState("");
-  const [year, setYear] = useState("");
   const [desc, setDesc] = useState("");
 
   const isUsernameValid = useMemo(() => {
@@ -40,12 +42,12 @@ export default function App() {
 
     // validation
     if (
-      !name.trim() ||
+      !nameRef.current.value.trim() ||
+      !specRef.current.value.trim() ||
+      !yearRef.current.value.trim() ||
+      yearRef.current.value <= 0 ||
       !username.trim() ||
       !password.trim() ||
-      !spec.trim() ||
-      !year.trim() ||
-      year <= 0 ||
       !desc.trim() ||
       !isUsernameValid ||
       !isPasswordValid ||
@@ -57,20 +59,20 @@ export default function App() {
 
     // stampo in console l'oggetto con i dati inseriti
     console.log({
-      name,
+      name: nameRef.current.value,
       username,
       password,
-      spec,
-      year,
+      spec: specRef.current.value,
+      year: yearRef.current.value,
       desc
     })
 
     // svuoto campi
-    setName("");
+    nameRef.current.value = "";
     setUsername("");
     setPassword("");
-    setSpec("");
-    setYear("");
+    specRef.current.value = "";
+    yearRef.current.value = "";
     setDesc("");
   }
 
@@ -83,8 +85,7 @@ export default function App() {
           <input
             type="text"
             placeholder="Inserisci il tuo nome completo"
-            value={name}
-            onChange={e => setName(e.target.value)}
+            ref={nameRef}
           />
         </div>
 
@@ -121,13 +122,12 @@ export default function App() {
         <div className="row">
           <label>Specializzazione</label>
           <select
-            value={spec}
-            onChange={e => setSpec(e.target.value)}
+            ref={specRef}
           >
             <option value="">Seleziona la tua specializzazione</option>
             <option value="full-stack">Full Stack</option>
-            <option value="fe">Frontend</option>
-            <option value="be">Backend</option>
+            <option value="frontend">Frontend</option>
+            <option value="backend">Backend</option>
           </select>
         </div>
 
@@ -136,8 +136,7 @@ export default function App() {
           <input
             type="number"
             placeholder="Inserisci quanti anni di esperienza hai accumulato"
-            value={year}
-            onChange={e => setYear(e.target.value)}
+            ref={yearRef}
           />
         </div>
 
