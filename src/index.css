@@ -45,3 +45,8 @@ button {
   border-radius: 10px;
   font-weight: bold;
 }
+
+p {
+  padding-top: 0.5rem;
+  font-size: small;
+}

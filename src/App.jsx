@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+const letters = "abcdefghijklmnopqrstuvwxyz";
+const numbers = "0123456789";
+const symbols = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/`~";
 
 export default function App() {
   // states
@@ -8,6 +12,28 @@ export default function App() {
   const [spec, setSpec] = useState("");
   const [year, setYear] = useState("");
   const [desc, setDesc] = useState("");
+
+  const isUsernameValid = useMemo(() => {
+    return username.trim().length >= 6 &&
+      username.split("").every(c => letters.includes(c.toLowerCase() ||
+        numbers.includes(c)))
+  }, [username]);
+
+  const isPasswordValid = useMemo(() => {
+    return (
+      password.trim().length >= 8 &&
+      password.split("").some(c => letters.includes(c)) &&
+      password.split("").some(c => numbers.includes(c)) &&
+      password.split("").some(c => symbols.includes(c))
+    );
+  }, [password]);
+
+  const isDescValid = useMemo(() => {
+    return (
+      desc.trim().length >= 100 &&
+      desc.trim().length < 1000
+    )
+  }, [desc]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -20,7 +46,10 @@ export default function App() {
       !spec.trim() ||
       !year.trim() ||
       year <= 0 ||
-      !desc.trim()
+      !desc.trim() ||
+      !isUsernameValid ||
+      !isPasswordValid ||
+      !isDescValid
     ) {
       alert("Errore: compila tutti i campi")
       return;
@@ -67,6 +96,11 @@ export default function App() {
             value={username}
             onChange={e => setUsername(e.target.value)}
           />
+          {username.trim() && (
+            <p style={{ color: isUsernameValid ? "green" : "red" }}>
+              {isUsernameValid ? "Username valido" : "Lo username deve essere di almeno 6 caratteri alfanumerici"}
+            </p>
+          )}
         </div>
 
         <div className="row">
@@ -77,6 +111,11 @@ export default function App() {
             value={password}
             onChange={e => setPassword(e.target.value)}
           />
+          {password.trim() && (
+            <p style={{ color: isPasswordValid ? "green" : "red" }}>
+              {isPasswordValid ? "Password valida" : "La descrizione deve essere di almeno 8 caratteri, 1 lettera, 1 numero, 1 simbolo"}
+            </p>
+          )}
         </div>
 
         <div className="row">
@@ -108,7 +147,12 @@ export default function App() {
             placeholder="Descriviti in breve"
             value={desc}
             onChange={e => setDesc(e.target.value)}
-          ></textarea>
+          />
+          {desc.trim() && (
+            <p style={{ color: isDescValid ? "green" : "red" }}>
+              {isDescValid ? `Descrizione valida (${desc.trim().length})` : `La descrizione deve avere una lunghezza compresa tra 100 e 1000 caratteri (${desc.trim().length})`}
+            </p>
+          )}
         </div>
 
         <button type="submit">Registrati</button>
